@@ -16,22 +16,20 @@ public class Pomodoro extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = 1L;
 
+    private PomodoroComponent component;
+    
     public Pomodoro() {
         super();
         setUndecorated(true);
-        PomodoroComponent component = new PomodoroComponent(this); 
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                setShape(new Ellipse2D.Double(0,0,getWidth(),getHeight()));
-            }
-        });
+        component = new PomodoroComponent(this); 
         Preferences prefs = Preferences.userNodeForPackage(Pomodoro.class);
-        int size = prefs.getInt("size", 400);
+        int width = prefs.getInt("width", 100);
+        int height = prefs.getInt("height", 400);
         int x = prefs.getInt("x", -1);        
         int y = prefs.getInt("y", -1);
-        component.duration = prefs.getInt("duration", 25);
-        setSize(size, size);
+        component.duration = prefs.getInt("duration", 25 * 60);
+        component.remainingDuration = component.duration;
+        setSize(width, height);
         if (x == -1 || y == -1) {
             setLocationRelativeTo(null);
         } else {
@@ -58,6 +56,7 @@ public class Pomodoro extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+		component.updateValues();
         getContentPane().invalidate();
         getContentPane().repaint();
     }
